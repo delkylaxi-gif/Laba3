@@ -1,0 +1,124 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int solvePartA(int N, int M) {
+  int result = 0;
+  for (int i = 2; i <= N; i++) {
+    result = (result + M) % i;
+  }
+  return result + 1;
+}
+
+int solvePartB(int N, int M, int L) {
+  for (int start = 1; start <= N; start++) {
+    vector<int> people;
+    for (int i = 1; i <= N; i++) {
+      people.push_back(i);
+    }
+
+    int idx = start - 1;
+
+    while (people.size() > 1) {
+      idx = (idx + M - 1) % people.size();
+      people.erase(people.begin() + idx);
+    }
+
+    if (people[0] == L) {
+      return start;
+    }
+  }
+  return -1;
+}
+
+void demonstration(int N, int M, int start) {
+  vector<int> people;
+  for (int i = 1; i <= N; i++) {
+    people.push_back(i);
+  }
+
+  int idx = start - 1;
+  int step = 1;
+
+  cout << "Начальный круг: ";
+  for (int p : people) cout << p << " ";
+  cout << "(счет начинается с " << start << ")" << endl;
+
+  while (people.size() > 1) {
+    idx = (idx + M - 1) % people.size();
+    cout << "Шаг" << step << ": выходит человек №" << people[idx] << endl;
+    people.erase(people.begin() + idx);
+    cout << " Оставшиеся: ";
+    for (int p : people) cout << p << " ";
+    cout << endl;
+    step++;
+  }
+  cout << "\n>>> Остался человек №" << people[0] << endl;
+}
+
+int main() {
+  int N, M;
+
+  cout << "\nВведите кол-во людей N: ";
+  cin >> N;
+  cout << "Введите M (счет до M): ";
+  cin >> M;
+
+  if (N <= 0 || M <= 0) {
+    cout << "Ошибка: N и M должны быть положительными!" << endl;
+    return 1;
+  }
+
+  cout << "\nЧасть а)" << endl;
+  cout << "Счет начинается с 1-го человека" << endl;
+
+  int survivor = solvePartA(N, M);
+  cout << "Остался человек №" << survivor << endl;
+
+  cout << "\nЧасть б)" << endl;
+  cout << "Найти начальную позицию по известному оставшемуся" << endl;
+
+  int L;
+  cout << "Введите номер оставшегося человека L (1-" << N << "): ";
+  cin >> L;
+
+  if (L < 1 || L > N) {
+    cout << "Ошибка: L должно быть от 1 до " << N << "!" << endl;
+    return 1;
+  }
+
+  int startPos = solvePartB(N, M, L);
+  cout << "Счет начинался с человека №" << startPos << endl;
+
+  cout << "\nПроверка" << endl;
+  int check = solvePartA(N, M);
+
+  vector<int> people;
+  for (int i = 1; i <= N; i++) people.push_back(i);
+  int idx = startPos - 1;
+  while (people.size() > 1) {
+    idx = (idx + M - 1) % people.size();
+    people.erase(people.begin() + idx);
+  }
+  cout << "Если начинать с " << startPos << " останется " << people[0] << endl;
+  cout << "Ожидалось: " << L << endl;
+  if (people[0] == L) {
+    cout << "Верно" << endl;
+  }
+  else {
+    cout << "Ошибка" << endl;
+  }
+
+  cout << "\nДемонстрация (N=" << N << ", M=" << M << ")" << endl;
+  if (N <= 2000000) {
+    demonstration(N, M, 1);
+  }
+  else {
+    cout << "(Слишком большое значение)" << endl;
+  }
+
+  cout << "Лысенко Владимир Александрович 090301-Пова-о25" << endl;
+
+  return 0;
+}
